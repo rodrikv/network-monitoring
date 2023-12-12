@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Real-Time Monitoring</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/static/js/chart.js"></script>
+    <script src="/static/js/utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/barba.js"></script>
+    <link rel="stylesheet" href="/static/css/style.css">
+</head>
+
+<body>
+    <header class="barba-container">
+        <nav>
+            <ul>
+                <li><a href="/" data-barba="link">Home</a></li>
+                <li><a href="/chart" data-barba="link">Real-time Chart</a></li>
+            </ul>
+        </nav>
+        <h1>Real-Time Monitoring Dashboard</h1>
+    </header>
+    <main>
+        <section>
+            <h2>Latest Monitoring Data</h2>
+            <canvas id="historicalChart">
+                <!-- This div will be populated by JavaScript with the latest data from the server -->
+            </canvas>
+        </section>
+    </main>
+    <footer>
+        <p>© 2023 Real-Time Monitoring System</p>
+    </footer>
+    <script src="/static/js/script.js"></script>
+    <script src="/static/js/barba.js"></script>
+</body>
+
+</html>
