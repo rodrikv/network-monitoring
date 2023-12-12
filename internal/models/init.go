@@ -23,7 +23,7 @@ CREATE TABLE IF NOT EXISTS monitoring (
 func InitDB() {
 	// Open SQLite database
 	var err error
-	Db, err = sql.Open("sqlite", "database/database.db")
+	Db, err = sql.Open("sqlite", "database.db")
 	if err != nil {
 		log.Fatal(err)
 	}

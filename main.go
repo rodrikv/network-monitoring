@@ -1,8 +1,11 @@
 package main
 
 import (
+	"embed"
 	"encoding/json"
 	"fmt"
+	"html/template"
+	"io/fs"
 	"log"
 	"net/http"
 	"os"
@@ -15,6 +18,12 @@ import (
 	"github.com/rodrikv/network-monitoring/internal/models"
 	"github.com/rodrikv/network-monitoring/internal/ping"
 )
+
+//go:embed templates/*
+var templates embed.FS
+
+//go:embed static/*
+var statics embed.FS
 
 // MonitoringResult represents the result of monitoring a source
 type MonitoringResult struct {
@@ -52,10 +61,22 @@ func main() {
 	// Create a new Gin router
 	router := gin.Default()
 
-	router.Static("/static", "./static")
+	staticFS, err := fs.Sub(statics, "static")
+	if err != nil {
+		panic("Failed to create sub filesystem for static files: " + err.Error())
+	}
+
+	// Serve static files from the embedded filesystem
+	router.StaticFS("/static", http.FS(staticFS))
 
 	// Define routes
-	router.LoadHTMLGlob("templates/*")
+	temps, err := template.ParseFS(templates, "templates/*")
+
+	if err != nil {
+		log.Fatal(err)
+	}
+	router.SetHTMLTemplate(temps)
+
 	router.GET("/", func(c *gin.Context) {
 		c.HTML(http.StatusOK, "index.html", nil)
 	})
