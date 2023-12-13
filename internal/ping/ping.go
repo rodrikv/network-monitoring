@@ -27,13 +27,16 @@ func NewMonitor(destinations []string, database *sql.DB) (monitor *Monitor, err 
 		}
 
 		pinger.OnRecv = func(pkt *ping.Packet) {
-			_, err = database.Exec("UPDATE monitoring SET status = ?, response_time = ? WHERE seq_id = ? AND source = ?", 1, pkt.Rtt.Milliseconds(), pkt.Seq, pkt.Addr)
+			_, err := database.Exec("UPDATE monitoring SET status = ?, response_time = ? WHERE id = (SELECT MAX(id) FROM monitoring WHERE seq_id = ? AND source = ?);", 1, pkt.Rtt.Milliseconds(), pkt.Seq, pkt.Addr)
+
+			// RowsAffected, err := sqlResult.RowsAffected()
 
 			if err != nil {
 				log.Println("Error updating data in the database:", err)
 			}
 
 			log.Println("Seq: ", pkt.Seq, " ", pkt.Nbytes, "bytes received from", pkt.Addr, "in", pkt.Rtt)
+			// log.Println("rows updated: ", RowsAffected)
 		}
 
 		pinger.OnSend = func(pkt *ping.Packet) {

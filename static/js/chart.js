@@ -49,12 +49,16 @@ function CreateChart(ctx) {
                 datasetIndex = chart.data.datasets.length - 1;
             }
 
-            if (!chart.data.labels.includes(data.seq_id)) {
-                chart.data.labels.push(data.seq_id);
+            let datetime = new Date(data.timestamp)
+
+            let xindex = data.seq_id + ") " + formatDatetime(datetime)
+
+            if (!chart.data.labels.includes(xindex)) {
+                chart.data.labels.push(xindex);
             }
 
             // Update the data for the corresponding source
-            let sourceIndex = chart.data.labels.indexOf(data.seq_id);
+            let sourceIndex = chart.data.labels.indexOf(xindex);
             chart.data.datasets[datasetIndex].data[sourceIndex] = data.response_time;
 
         });

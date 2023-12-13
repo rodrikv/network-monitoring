@@ -11,3 +11,24 @@ function stringToColorCode(input) {
 
     return colorCode;
 }
+
+function formatDatetime(timestamp) {
+    // Create a new Date object using the timestamp
+    let datetime = new Date(timestamp);
+
+    // Define options for formatting
+    let options = {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+        hour: '2-digit',
+        minute: '2-digit',
+        second: '2-digit',
+        timeZoneName: 'short',
+    };
+
+    // Format the date using toLocaleString with the specified options
+    let formattedDate = datetime.toLocaleString('en-GB', options);
+
+    return formattedDate
+}
