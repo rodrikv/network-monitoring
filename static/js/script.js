@@ -5,7 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
     fetch("/historical-data").then(function (response) {
         response.json().then(function (data) {
             let chart = CreateChart(ctx, data);
-            ele.ondblclick = chart.resetZoom();
+            ele.ondblclick = chart.resetZoom;
         });
     })
 });

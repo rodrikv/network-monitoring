@@ -11,7 +11,7 @@ function CreateChart(ctx, d) {
     }
     let data = {
         datasets: [{
-            label: 'My First dataset',
+            label: domain_name,
             borderColor: stringToColorCode(domain_name),
             backgroundColor: stringToColorCode(domain_name, 1),
             pointBorderColor: stringToColorCode(domain_name),
@@ -87,4 +87,5 @@ function CreateChart(ctx, d) {
     };
     // </block:config>
     let chart = new Chart(ctx, config);
+    return chart
 }
