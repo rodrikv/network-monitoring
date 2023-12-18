@@ -1,4 +1,4 @@
-function stringToColorCode(input) {
+function stringToColorCode(input, darknessFactor = 0.7) {
     // Simple hash function (djb2 algorithm)
     let hash = 5381;
 
@@ -6,10 +6,20 @@ function stringToColorCode(input) {
         hash = (hash * 33) ^ input.charCodeAt(i);
     }
 
-    // Convert the hash value to a hexadecimal color code
-    const colorCode = '#' + (hash >>> 0).toString(16).slice(-6);
+    // Convert the hash value to RGB
+    const red = (hash & 0xFF0000) >> 16;
+    const green = (hash & 0x00FF00) >> 8;
+    const blue = hash & 0x0000FF;
 
-    return colorCode;
+    // Adjust the RGB values to make the color darker
+    const darkerRed = Math.floor(red * darknessFactor);
+    const darkerGreen = Math.floor(green * darknessFactor);
+    const darkerBlue = Math.floor(blue * darknessFactor);
+
+    // Convert the darker RGB values back to hex
+    const darkerColorCode = `#${(darkerRed << 16 | darkerGreen << 8 | darkerBlue).toString(16).padStart(6, '0')}`;
+
+    return darkerColorCode;
 }
 
 function formatDatetime(timestamp) {
@@ -31,4 +41,9 @@ function formatDatetime(timestamp) {
     let formattedDate = datetime.toLocaleString('en-GB', options);
 
     return formattedDate
+}
+const rand255 = () => Math.round(Math.random() * 255);
+
+function randomColor(alpha) {
+    return 'rgba(' + rand255() + ',' + rand255() + ',' + rand255() + ',' + (alpha || '.3') + ')';
 }

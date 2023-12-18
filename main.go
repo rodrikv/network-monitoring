@@ -10,6 +10,7 @@ import (
 	"net/http"
 	"os"
 	"regexp"
+	"slices"
 	"strconv"
 	"time"
 
@@ -267,7 +268,7 @@ func fetchChartData() ([]string, error) {
 }
 
 func latestData(c *gin.Context) {
-	rows, err := models.Db.Query("SELECT seq_id,  source, status, response_time, timestamp FROM monitoring WHERE timestamp >= datetime('now', '-5 minutes') ORDER BY timestamp ASC")
+	rows, err := models.Db.Query("SELECT seq_id,  source, status, response_time, timestamp FROM monitoring ORDER BY id DESC LIMIT 1000")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
@@ -283,7 +284,7 @@ func latestData(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
-		results = append(results, result)
+		results = slices.Insert(results, 0, result)
 	}
 
 	c.JSON(http.StatusOK, results)
