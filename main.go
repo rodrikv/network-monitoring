@@ -10,7 +10,6 @@ import (
 	"net/http"
 	"os"
 	"regexp"
-	"slices"
 	"strconv"
 	"time"
 
@@ -268,14 +267,14 @@ func fetchChartData() ([]string, error) {
 }
 
 func latestData(c *gin.Context) {
-	rows, err := models.Db.Query("SELECT seq_id,  source, status, response_time, timestamp FROM monitoring ORDER BY id DESC LIMIT 1000")
+	rows, err := models.Db.Query("SELECT seq_id, source, status, response_time, timestamp FROM monitoring ORDER BY id DESC LIMIT 1000")
 	if err != nil {
 		c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 		return
 	}
 	defer rows.Close()
 
-	var results []MonitoringResult
+	groupedResults := make(map[string][]MonitoringResult)
 
 	for rows.Next() {
 		var result MonitoringResult
@@ -284,8 +283,25 @@ func latestData(c *gin.Context) {
 			c.JSON(http.StatusInternalServerError, gin.H{"error": "Internal Server Error"})
 			return
 		}
-		results = slices.Insert(results, 0, result)
+
+		// Check if the source is already in the map
+		if _, ok := groupedResults[result.Source]; !ok {
+			groupedResults[result.Source] = make([]MonitoringResult, 0)
+		}
+
+		// Append the result to the corresponding source in the map
+		groupedResults[result.Source] = append(groupedResults[result.Source], result)
 	}
 
-	c.JSON(http.StatusOK, results)
+	// Create a list containing the length and records for each source
+	var finalResults []map[string]interface{}
+	for source, records := range groupedResults {
+		result := make(map[string]interface{})
+		result["source"] = source
+		result["count"] = len(records)
+		result["data"] = records
+		finalResults = append(finalResults, result)
+	}
+
+	c.JSON(http.StatusOK, finalResults)
 }

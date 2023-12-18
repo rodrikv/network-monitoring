@@ -1,11 +1,15 @@
 document.addEventListener('DOMContentLoaded', function () {
-    const ele = document.getElementById('historicalChart');
-    const ctx = ele.getContext('2d');
+    const parentCanvas = document.getElementById("parentCanvas")
 
     fetch("/historical-data").then(function (response) {
         response.json().then(function (data) {
-            let chart = CreateChart(ctx, data);
-            ele.ondblclick = chart.resetZoom;
+            data.forEach(element => {
+                const ele = document.createElement("canvas");
+                parentCanvas.appendChild(ele);
+                const ctx = ele.getContext('2d');
+                let chart = CreateChart(ctx, element.data);
+                ele.ondblclick = chart.resetZoom;
+            });
         });
     })
 });
